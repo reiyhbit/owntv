@@ -5,7 +5,7 @@
     <meta content="width=device-width,initial-scale=1" name="viewport">
     <meta content="no-referrer" name="referrer">
     <link href="data:image/x-icon;," rel="icon">
-    <title>IPTV Mobile - PH Channels</title>
+    <title>IPTV Mobile</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/controls.min.css" rel="stylesheet">
     <style>
         * {
@@ -135,23 +135,6 @@
         
         #epg-btn:active {
             background: #e55a2b;
-        }
-
-        /* Add Channel Button */
-        #add-channel-btn {
-            padding: 10px;
-            margin: 8px 10px;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        
-        #add-channel-btn:active {
-            background: #218838;
         }
         
         /* Quick channels - LAHAT NG CHANNELS NA! */
@@ -295,70 +278,6 @@
         .channel-item.active {
             background: #4fa3c4;
         }
-
-        /* Add Channel Modal */
-        #add-channel-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1002;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .modal-content h3 {
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 5px;
-            color: white;
-            font-size: 14px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        #save-channel {
-            background: #28a745;
-            color: white;
-        }
-
-        #cancel-add {
-            background: #6c757d;
-            color: white;
-        }
         
         /* Toast notifications */
         .toast {
@@ -400,19 +319,6 @@
             color: white;
             font-size: 14px;
         }
-
-        /* Channel category */
-        .channel-category {
-            grid-column: 1 / span 2;
-            background: #61dafb;
-            color: #000;
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -442,9 +348,6 @@
             
             <!-- EPG Button -->
             <button id="epg-btn">📺 PROGRAM GUIDE</button>
-
-            <!-- Add Channel Button -->
-            <button id="add-channel-btn">➕ ADD CHANNEL</button>
             
             <!-- Quick Channels List - LAHAT NG CHANNELS NA! -->
             <div id="quick-channels">
@@ -465,21 +368,6 @@
         <input type="text" id="channel-search" placeholder="Search channels...">
         <div id="channels-list"></div>
     </div>
-
-    <!-- Add Channel Modal -->
-    <div id="add-channel-modal">
-        <div class="modal-content">
-            <h3>Add Channel</h3>
-            <input type="text" id="channel-name" class="modal-input" placeholder="Channel Name (e.g., GMA 7)">
-            <input type="text" id="channel-url" class="modal-input" placeholder="M3U8 URL">
-            <input type="text" id="channel-logo" class="modal-input" placeholder="Logo URL (optional)">
-            
-            <div class="modal-buttons">
-                <button id="save-channel" class="modal-btn">Save Channel</button>
-                <button id="cancel-add" class="modal-btn">Cancel</button>
-            </div>
-        </div>
-    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.11/shaka-player.compiled.js"></script>
     <script src="https://dbghelp.github.io/M3U8Interpreter.js"></script>
@@ -487,7 +375,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <script>
-        // Mobile IPTV App with WORKING PHILIPPINE CHANNELS
+        // Mobile IPTV App with COMPLETE CHANNELS
         class MobileIPTV {
             constructor() {
                 this.channels = [];
@@ -496,114 +384,6 @@
                 this.xmlepg = null;
                 this.isFullscreen = false;
                 
-                // WORKING Philippine Channels - tested and verified
-                this.phChannels = [
-                    // News Channels
-                    {
-                        channelName: "TFC News",
-                        manifestUrl: "https://tfcnews-lh.akamaihd.net/i/TFCN_1@321283/master.m3u8",
-                        tvgLogo: "https://www.tfc.tv/img/logo-tfc-news.png",
-                        tvgId: "tfcnews",
-                        category: "PH News"
-                    },
-                    {
-                        channelName: "CNN Philippines",
-                        manifestUrl: "https://stream-aka.cnntv.ph/live/cnnphils/master.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/CNN_Philippines.svg/1200px-CNN_Philippines.svg.png",
-                        tvgId: "cnnph",
-                        category: "PH News"
-                    },
-                    
-                    // Entertainment
-                    {
-                        channelName: "TFC",
-                        manifestUrl: "https://tfc-lh.akamaihd.net/i/TFC_1@321284/master.m3u8",
-                        tvgLogo: "https://www.abs-cbn.com/tfc/img/tfc-logo.png",
-                        tvgId: "tfc",
-                        category: "PH Entertainment"
-                    },
-                    {
-                        channelName: "GMA Pinoy TV",
-                        manifestUrl: "https://gmapinoytv-lh.akamaihd.net/i/GMAPinoyTV_1@321287/master.m3u8",
-                        tvgLogo: "https://www.gmanetwork.com/gmapinoytv/img/gmapinoytv-logo.png",
-                        tvgId: "gmapinoytv",
-                        category: "PH Entertainment"
-                    },
-                    
-                    // Sports
-                    {
-                        channelName: "TAP Sports",
-                        manifestUrl: "https://tapsports-lh.akamaihd.net/i/TAPSPORTS_1@321289/master.m3u8",
-                        tvgLogo: "https://www.tapdigitalservices.com/wp-content/uploads/2021/03/TAP-Sports-Logo.png",
-                        tvgId: "tapsports",
-                        category: "PH Sports"
-                    },
-                    {
-                        channelName: "Premier Sports",
-                        manifestUrl: "https://premiersports-lh.akamaihd.net/i/PREMIERSPORTS_1@321290/master.m3u8",
-                        tvgLogo: "https://www.premiersports.ph/img/logo.png",
-                        tvgId: "premiersports",
-                        category: "PH Sports"
-                    },
-                    
-                    // Free TV (Public Streams)
-                    {
-                        channelName: "PTV 4",
-                        manifestUrl: "https://stream.ptv.gov.ph/live/ptv/master.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/6/6a/PTV_network_logo_%282016%29.svg/1200px-PTV_network_logo_%282016%29.svg.png",
-                        tvgId: "ptv4",
-                        category: "PH Free TV"
-                    },
-                    {
-                        channelName: "IBC 13",
-                        manifestUrl: "https://ibc13-live.herokuapp.com/stream/ibc13.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/en/thumb/7/7e/IBC_13_%282016%29.svg/1200px-IBC_13_%282016%29.svg.png",
-                        tvgId: "ibc13",
-                        category: "PH Free TV"
-                    },
-                    
-                    // International PH Channels
-                    {
-                        channelName: "The Filipino Channel",
-                        manifestUrl: "https://tfc-lh.akamaihd.net/i/TFC_1@321284/master.m3u8",
-                        tvgLogo: "https://www.abs-cbn.com/tfc/img/tfc-logo.png",
-                        tvgId: "tfc",
-                        category: "PH International"
-                    },
-                    {
-                        channelName: "GMA Life TV",
-                        manifestUrl: "https://gmalifetv-lh.akamaihd.net/i/GMALifeTV_1@321288/master.m3u8",
-                        tvgLogo: "https://www.gmanetwork.com/gmalifetv/img/gmalifetv-logo.png",
-                        tvgId: "gmalifetv",
-                        category: "PH International"
-                    }
-                ];
-                
-                // Additional working international channels
-                this.workingChannels = [
-                    {
-                        channelName: "🌟 ANIMAX",
-                        manifestUrl: "https://animax-live.vercel.app/stream/animax.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Animax_Asia_2015.svg/1200px-Animax_Asia_2015.svg.png",
-                        tvgId: "animax",
-                        category: "International"
-                    },
-                    {
-                        channelName: "🌟 HBO Asia",
-                        manifestUrl: "https://hboasia-live.vercel.app/stream/hbo.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/HBO_Asia_2016.svg/1200px-HBO_Asia_2016.svg.png",
-                        tvgId: "hboasia",
-                        category: "International"
-                    },
-                    {
-                        channelName: "🌟 Cartoon Network",
-                        manifestUrl: "https://cntv-live.vercel.app/stream/cartoonnetwork.m3u8",
-                        tvgLogo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/1200px-Cartoon_Network_2010_logo.svg.png",
-                        tvgId: "cartoonnetwork",
-                        category: "International"
-                    }
-                ];
-                
                 this.initializeApp();
             }
             
@@ -611,8 +391,8 @@
                 // Initialize Shaka Player
                 this.initializePlayer();
                 
-                // Load working channels immediately
-                this.loadWorkingChannels();
+                // Load default playlist
+                this.loadDefaultPlaylist();
                 
                 // Setup event listeners
                 this.setupEventListeners();
@@ -637,40 +417,53 @@
                     document.getElementById('loading').style.display = 'none';
                     this.updateChannelStatus('Error loading channel');
                     console.error('Player error:', error);
-                    this.showToast('Channel not available. Try another one.');
                 });
             }
             
-            loadWorkingChannels() {
-                // Combine PH channels with working international channels
-                this.channels = [...this.phChannels, ...this.workingChannels];
+            async loadDefaultPlaylist() {
+                const m3u8Link = 'https://raw.githubusercontent.com/reiyhbit/iptv/refs/heads/main/playlist.m3u';
+                await this.loadPlaylistFromUrl(m3u8Link);
+            }
+            
+            async loadPlaylistFromUrl(url) {
+                try {
+                    document.getElementById('loading').style.display = 'block';
+                    this.updateChannelStatus('Loading playlist...');
+                    
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const text = await response.text();
+                        this.parsePlaylist(text);
+                    } else {
+                        this.showToast('Failed to load playlist');
+                    }
+                } catch (error) {
+                    console.error('Error loading playlist:', error);
+                    this.showToast('Error loading playlist');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }
+            
+            parsePlaylist(content) {
+                const m3u8Interpreter = new M3U8Interpreter(content);
+                m3u8Interpreter.parse();
+                this.channels = m3u8Interpreter.getChannels();
+                
+                // Initialize XML EPG if available
+                const urls = m3u8Interpreter.getUrlTvg();
+                if (urls && urls.length > 0) {
+                    this.xmlepg = new XMLEPG();
+                    this.xmlepg.setPlaylistChannels(this.channels);
+                    this.xmlepg.load(urls);
+                }
                 
                 this.updateChannelList();
                 this.updateQuickChannels();
                 
                 if (this.channels.length > 0) {
-                    // Auto-play first channel
-                    setTimeout(() => {
-                        this.playChannel(0);
-                    }, 1000);
+                    this.playChannel(0);
                 }
-                
-                this.showToast(`Loaded ${this.channels.length} working channels`);
-            }
-            
-            addCustomChannel(name, url, logo) {
-                const newChannel = {
-                    channelName: name,
-                    manifestUrl: url,
-                    tvgLogo: logo || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjNjFkYWZiIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxMiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UEg8L3RleHQ+Cjwvc3ZnPgo=',
-                    tvgId: name.toLowerCase().replace(/ /g, ''),
-                    category: "Custom"
-                };
-                
-                this.channels.push(newChannel);
-                this.updateChannelList();
-                this.updateQuickChannels();
-                this.showToast(`Added: ${name}`);
             }
             
             updateChannelList() {
@@ -702,50 +495,34 @@
                 const quickChannels = document.getElementById('quick-channels');
                 quickChannels.innerHTML = '';
                 
+                // LAHAT NG CHANNELS na!
                 if (this.channels.length === 0) {
                     quickChannels.innerHTML = '<div style="grid-column: 1 / span 2; text-align: center; padding: 10px; color: #888; font-size: 12px;">No channels available</div>';
                     return;
                 }
                 
-                // Group channels by category
-                const categories = {};
-                this.channels.forEach(channel => {
-                    const category = channel.category || 'Other';
-                    if (!categories[category]) {
-                        categories[category] = [];
+                // Display LAHAT ng channels
+                this.channels.forEach((channel, index) => {
+                    const quickChannel = document.createElement('div');
+                    quickChannel.className = 'quick-channel';
+                    if (index === this.currentChannelIndex) {
+                        quickChannel.classList.add('active');
                     }
-                    categories[category].push(channel);
-                });
-                
-                // Display channels by category
-                Object.keys(categories).forEach(category => {
-                    // Add category header
-                    const categoryHeader = document.createElement('div');
-                    categoryHeader.className = 'channel-category';
-                    categoryHeader.textContent = category;
-                    quickChannels.appendChild(categoryHeader);
                     
-                    // Add channels in this category
-                    categories[category].forEach((channel, index) => {
-                        const globalIndex = this.channels.findIndex(c => c.channelName === channel.channelName);
-                        const quickChannel = document.createElement('div');
-                        quickChannel.className = 'quick-channel';
-                        if (globalIndex === this.currentChannelIndex) {
-                            quickChannel.classList.add('active');
-                        }
-                        
-                        quickChannel.innerHTML = `
-                            <img src="${channel.tvgLogo}" alt="${channel.channelName}" class="channel-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjNjFkYWZiIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxMiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VFY8L3RleHQ+Cjwvc3ZnPgo='">
-                            <span class="channel-name">${channel.channelName}</span>
-                        `;
-                        
-                        quickChannel.addEventListener('click', () => {
-                            this.playChannel(globalIndex);
-                        });
-                        
-                        quickChannels.appendChild(quickChannel);
+                    quickChannel.innerHTML = `
+                        <img src="${channel.tvgLogo}" alt="${channel.channelName}" class="channel-logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiBmaWxsPSIjNjFkYWZiIi8+Cjx0ZXh0IHg9IjEyIiB5PSIxMiIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjMDAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+VFY8L3RleHQ+Cjwvc3ZnPgo='">
+                        <span class="channel-name">${channel.channelName}</span>
+                    `;
+                    
+                    quickChannel.addEventListener('click', () => {
+                        this.playChannel(index);
                     });
+                    
+                    quickChannels.appendChild(quickChannel);
                 });
+
+                // Show channel count
+                this.showToast(`Loaded ${this.channels.length} channels`);
             }
             
             playChannel(index) {
@@ -755,9 +532,6 @@
                 const channel = this.channels[index];
                 
                 try {
-                    document.getElementById('loading').style.display = 'block';
-                    this.updateChannelStatus('Loading channel...');
-                    
                     // Configure DRM if available
                     let licenseKey = channel.licenseKey;
                     if (licenseKey && !Array.isArray(licenseKey)) {
@@ -777,25 +551,16 @@
                     }
                     
                     // Load and play the channel
-                    this.player.load(channel.manifestUrl).then(() => {
-                        document.getElementById('video').play();
-                        document.getElementById('loading').style.display = 'none';
-                        this.updateChannelStatus('Playing');
-                        
-                        // Update UI
-                        this.updateChannelInfo(channel.channelName);
-                        this.updateChannelList();
-                        this.updateQuickChannels();
-                        this.showToast(`Now playing: ${channel.channelName}`);
-                    }).catch(error => {
-                        document.getElementById('loading').style.display = 'none';
-                        this.updateChannelStatus('Error');
-                        this.showToast('Failed to load channel. Try another one.');
-                        console.error('Load error:', error);
-                    });
+                    this.player.load(channel.manifestUrl);
+                    document.getElementById('video').play();
+                    
+                    // Update UI
+                    this.updateChannelInfo(channel.channelName);
+                    this.updateChannelList();
+                    this.updateQuickChannels();
+                    this.showToast(`Now playing: ${channel.channelName}`);
                     
                 } catch (error) {
-                    document.getElementById('loading').style.display = 'none';
                     console.error('Error playing channel:', error);
                     this.showToast('Error playing channel');
                     this.updateChannelStatus('Error');
@@ -849,11 +614,6 @@
                 // EPG
                 document.getElementById('epg-btn').addEventListener('click', () => this.showEPG());
                 
-                // Add Channel
-                document.getElementById('add-channel-btn').addEventListener('click', () => this.showAddChannelModal());
-                document.getElementById('save-channel').addEventListener('click', () => this.saveCustomChannel());
-                document.getElementById('cancel-add').addEventListener('click', () => this.hideAddChannelModal());
-                
                 // Search
                 document.getElementById('channel-search').addEventListener('input', (e) => {
                     this.filterChannels(e.target.value);
@@ -871,38 +631,6 @@
                 this.filterChannels(''); // Reset filter
             }
             
-            showAddChannelModal() {
-                document.getElementById('add-channel-modal').style.display = 'flex';
-                document.getElementById('channel-name').focus();
-            }
-            
-            hideAddChannelModal() {
-                document.getElementById('add-channel-modal').style.display = 'none';
-                // Clear inputs
-                document.getElementById('channel-name').value = '';
-                document.getElementById('channel-url').value = '';
-                document.getElementById('channel-logo').value = '';
-            }
-            
-            saveCustomChannel() {
-                const name = document.getElementById('channel-name').value.trim();
-                const url = document.getElementById('channel-url').value.trim();
-                const logo = document.getElementById('channel-logo').value.trim();
-                
-                if (!name || !url) {
-                    this.showToast('Please enter channel name and URL');
-                    return;
-                }
-                
-                if (!url.startsWith('http')) {
-                    this.showToast('Please enter a valid URL starting with http');
-                    return;
-                }
-                
-                this.addCustomChannel(name, url, logo);
-                this.hideAddChannelModal();
-            }
-            
             filterChannels(searchTerm) {
                 const channelItems = document.querySelectorAll('.channel-item');
                 const searchLower = searchTerm.toLowerCase();
@@ -918,7 +646,12 @@
             }
             
             showEPG() {
-                this.showToast('EPG feature coming soon!');
+                if (this.xmlepg) {
+                    this.showToast('Program guide loaded');
+                    // You can implement EPG display here
+                } else {
+                    this.showToast('No program guide available');
+                }
             }
             
             showToast(message) {
