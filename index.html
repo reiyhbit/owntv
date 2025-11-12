@@ -137,15 +137,15 @@
             background: #e55a2b;
         }
         
-        /* Quick channels - MAS COMPACT NA! */
+        /* Quick channels - LAHAT NG CHANNELS NA! */
         #quick-channels {
             flex: 1;
             overflow-y: auto;
             padding: 5px;
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 columns para mas maraming channels */
+            grid-template-columns: 1fr 1fr; /* 2 columns */
             gap: 5px;
-            max-height: 150px; /* Limit height */
+            max-height: none; /* Remove height limit */
         }
         
         .quick-channel {
@@ -155,7 +155,7 @@
             background: #3c4043;
             border-radius: 6px;
             cursor: pointer;
-            min-height: 35px; /* Mas mababa ang height */
+            min-height: 35px;
         }
         
         .quick-channel:active {
@@ -168,7 +168,7 @@
         }
         
         .channel-logo {
-            width: 24px; /* Mas maliit na logo */
+            width: 24px;
             height: 24px;
             margin-right: 8px;
             border-radius: 4px;
@@ -177,7 +177,7 @@
         }
         
         .channel-name {
-            font-size: 12px; /* Mas maliit na font */
+            font-size: 12px;
             flex: 1;
             white-space: nowrap;
             overflow: hidden;
@@ -200,16 +200,6 @@
         
         #channel-list-btn:active {
             background: #4fa3c4;
-        }
-        
-        /* Scroll indicator */
-        .scroll-indicator {
-            text-align: center;
-            color: #888;
-            font-size: 11px;
-            padding: 5px;
-            background: #2d2d2d;
-            border-top: 1px solid #444;
         }
         
         /* Fullscreen mode */
@@ -359,13 +349,10 @@
             <!-- EPG Button -->
             <button id="epg-btn">📺 PROGRAM GUIDE</button>
             
-            <!-- Quick Channels List - MAS COMPACT NA! -->
+            <!-- Quick Channels List - LAHAT NG CHANNELS NA! -->
             <div id="quick-channels">
-                <!-- Channels will be loaded here -->
+                <!-- LAHAT ng channels lalabas dito -->
             </div>
-            
-            <!-- Scroll Indicator -->
-            <div class="scroll-indicator">↓ Scroll for more channels ↓</div>
             
             <!-- All Channels Button -->
             <button id="channel-list-btn">📋 ALL CHANNELS</button>
@@ -388,7 +375,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <script>
-        // Mobile IPTV App with COMPACT 50/50 layout
+        // Mobile IPTV App with COMPLETE CHANNELS
         class MobileIPTV {
             constructor() {
                 this.channels = [];
@@ -508,15 +495,14 @@
                 const quickChannels = document.getElementById('quick-channels');
                 quickChannels.innerHTML = '';
                 
-                // Show first 12 channels as quick access (6 rows x 2 columns = 12 channels)
-                const quickAccessChannels = this.channels.slice(0, 12);
-                
-                if (quickAccessChannels.length === 0) {
+                // LAHAT NG CHANNELS na!
+                if (this.channels.length === 0) {
                     quickChannels.innerHTML = '<div style="grid-column: 1 / span 2; text-align: center; padding: 10px; color: #888; font-size: 12px;">No channels available</div>';
                     return;
                 }
                 
-                quickAccessChannels.forEach((channel, index) => {
+                // Display LAHAT ng channels
+                this.channels.forEach((channel, index) => {
                     const quickChannel = document.createElement('div');
                     quickChannel.className = 'quick-channel';
                     if (index === this.currentChannelIndex) {
@@ -534,6 +520,9 @@
                     
                     quickChannels.appendChild(quickChannel);
                 });
+
+                // Show channel count
+                this.showToast(`Loaded ${this.channels.length} channels`);
             }
             
             playChannel(index) {
